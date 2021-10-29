@@ -1,5 +1,8 @@
 # alura-tracker
 
+## Project link
+<a href="https://alura-tracker-sigma.vercel.app/" target="_blank">Alura Tracker</a>
+
 ## Project setup
 ```
 yarn install
