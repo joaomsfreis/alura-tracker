@@ -4,7 +4,7 @@
     <span class="icon is-small">
       <i class="fas fa-plus"></i>
     </span>
-    <span>Novo projeto</span>
+    <span>Novo projeto 2</span>
     </router-link>
     <table class="table is-fullwidth">
       <thead>
