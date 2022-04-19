@@ -21,9 +21,10 @@
 <script lang="ts">
 import { NotificationType } from "@/interfaces/INotification";
 import { useStore } from "@/store";
-import { ADD_PROJECT, EDIT_PROJECT } from "@/store/mutations-type";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import useNotifier from "@/hooks/notifier";
+import { ALTER_PROJECT, STORE_PROJECT } from "@/store/actions-type";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "Form",
@@ -32,43 +33,47 @@ export default defineComponent({
       type: String,
     },
   },
-  mounted() {
-    if (this.id) {
-      const project = this.store.state.projects.find(
-        (proj) => proj.id === this.id
-      );
-      this.projectName = project?.name || "";
-    }
-  },
-  data: () => ({
-    projectName: "",
-  }),
-  methods: {
-    save() {
-      if (this.id) {
-        this.store.commit(EDIT_PROJECT, {
-          id: this.id,
-          name: this.projectName,
-        });
-      } else {
-        this.store.commit(ADD_PROJECT, this.projectName);
-      }
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const { notify } = useNotifier();
 
-      this.notify(
+    const projectName = ref("");
+    if (props.id) {
+      const project = store.state.project.projects.find(
+        (proj) => proj.id == props.id
+      );
+      projectName.value = project?.name || "";
+    }
+
+    const isSuccess = () => {
+      notify(
         NotificationType.SUCCESS,
         "Sucesso!",
         "Pronto! Seu projeto já está disponível!"
       );
-      this.projectName = "";
-      this.$router.push("/projects");
-    }
-  },
-  setup() {
-    const store = useStore();
-    const { notify } = useNotifier();
+      projectName.value = "";
+      router.push("/projects");
+    };
+
+    const save = () => {
+      if (props.id) {
+        store
+          .dispatch(ALTER_PROJECT, {
+            id: props.id,
+            name: projectName.value,
+          })
+          .then(() => isSuccess());
+      } else {
+        store.dispatch(STORE_PROJECT, projectName.value).then(() => {
+          isSuccess();
+        });
+      }
+    };
+
     return {
-      store,
-      notify
+      projectName,
+      save,
     };
   },
 });

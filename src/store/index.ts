@@ -1,37 +1,30 @@
-import { INotification, NotificationType } from "@/interfaces/INotification";
-import IProject from "@/interfaces/IProject";
+import { INotification } from "@/interfaces/INotification";
 import { InjectionKey } from "vue";
 import { createStore, Store, useStore as vuexUseSotre } from "vuex";
-import { ADD_PROJECT, EDIT_PROJECT, NOTIFY, REMOVE_PROJECT } from "./mutations-type";
+import { ALTER_TASK, GET_TASKS, STORE_TASK } from "./actions-type";
+import { ADD_TASK, DEFINE_TASKS, EDIT_TASK, NOTIFY } from "./mutations-type";
+import { project, ProjectState } from "./modules/project";
+import { task, TaskState } from "./modules/task";
 
-interface State {
-    projects: IProject[],
-    notifications: INotification[]
+export interface State {
+    notifications: INotification[],
+    project: ProjectState,
+    task: TaskState
 }
 
 export const key: InjectionKey<Store<State>> = Symbol();
 
 export const store = createStore<State>({
     state: {
-        projects: [],
+        project: {
+            projects: []
+        },
+        task: {
+            tasks: []
+        },
         notifications: []
     },
     mutations: {
-        [ADD_PROJECT](state, projectName: string) {
-            const project = {
-                id: new Date().toISOString(),
-                name: projectName
-            } as IProject;
-
-            state.projects.push(project);
-        },
-        [EDIT_PROJECT](state, project: IProject) {
-            const index = state.projects.findIndex(proj => proj.id === project.id);
-            state.projects[index] = project;
-        },
-        [REMOVE_PROJECT](state, id: string) {
-            state.projects = state.projects.filter(proj => proj.id !== id);
-        },
         [NOTIFY](state, newNotification: INotification) {
             newNotification.id = new Date().getTime();
             state.notifications.push(newNotification);
@@ -42,6 +35,11 @@ export const store = createStore<State>({
                 );
             }, 2000);
         }
+    },
+    actions: {},
+    modules: {
+        project,
+        task
     }
 });
 

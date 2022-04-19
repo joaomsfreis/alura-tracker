@@ -16,7 +16,6 @@
 import { defineComponent } from "vue";
 import Notifications from "./components/Notifications.vue";
 import SideBar from "./components/SideBar.vue";
-import ITask from "./interfaces/ITask";
 
 export default defineComponent({
   name: "App",

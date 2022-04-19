@@ -4,13 +4,13 @@
     <span class="icon is-small">
       <i class="fas fa-plus"></i>
     </span>
-    <span>Novo projeto 4</span>
+    <span>Novo projeto</span>
     </router-link>
     <table class="table is-fullwidth">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Name</th>
+          <th>Nome</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -38,21 +38,22 @@
 
 <script lang="ts">
 import { useStore } from "@/store";
-import { REMOVE_PROJECT } from "@/store/mutations-type";
+import { GET_PROJECTS, REMOVE_PROJECT } from "@/store/actions-type";
 import { computed, defineComponent } from "vue";
 
 export default defineComponent({
   name: "List",
   methods: {
       remove(id: string) {
-          this.store.commit(REMOVE_PROJECT, id)
+          this.store.dispatch(REMOVE_PROJECT, id)
       }
   },
   setup() {
       const store = useStore();
+      store.dispatch(GET_PROJECTS);
       return {
           store,
-          projects: computed(() => store.state.projects)
+          projects: computed(() => store.state.project.projects)
       }
   },
 });

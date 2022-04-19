@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import Timer from "./Timer.vue";
 import { useStore } from "vuex";
 import { key } from "@/store";
@@ -44,27 +44,28 @@ export default defineComponent({
   name: "Form",
   emits: ["toSave"],
   components: { Timer },
-  data() {
-    return {
-      description: '',
-      projectID: ''
-    };
-  },
-  methods: {
-    finish(elapsedTime: number) {
-      this.$emit("toSave", {
+  setup(props, { emit }) {
+    const store = useStore(key);
+
+    const description = ref("");
+    const projectID = ref("");
+    const projects = computed(() => store.state.project.projects);
+
+    const finish = (elapsedTime: number): void => {
+      emit("toSave", {
         seconds: elapsedTime,
-        description: this.description,
-        project: this.projects.find(project => project.id === this.projectID)
+        description: description.value,
+        project: projects.value.find(project => project.id === projectID.value)
       });
 
-      this.description = "";
-    },
-  },
-  setup() {
-    const store = useStore(key);
+      description.value = "";
+    }
+
     return {
-      projects: computed(() => store.state.projects),
+      projects,
+      description,
+      projectID,
+      finish
     };
   },
 });
